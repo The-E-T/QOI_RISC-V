@@ -1,0 +1,97 @@
+
+Discarded input sections
+
+ .comment       0x00000000       0x1c build/sensor.o
+ .riscv.attributes
+                0x00000000       0x25 build/sensor.o
+ .comment       0x00000000       0x1c build/tcnt.o
+ .riscv.attributes
+                0x00000000       0x25 build/tcnt.o
+ .comment       0x00000000       0x1c build/hash.o
+ .riscv.attributes
+                0x00000000       0x25 build/hash.o
+ .comment       0x00000000       0x1c build/firmware.o
+ .riscv.attributes
+                0x00000000       0x25 build/firmware.o
+ .riscv.attributes
+                0x00000000       0x27 build/start.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ROM              0x00000000         0x00002000         xr
+RAM              0x00002000         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.text           0x00000000      0x5b8
+                0x00000000                        . = 0x0
+ *(.init)
+ .init          0x00000000      0x230 build/start.o
+                0x00000000                start
+                0x000001d0                sw_mult
+ *(.text*)
+ .text          0x00000230       0x38 build/sensor.o
+                0x00000230                SENSOR_fetch
+                0x0000023c                SENSOR_difference
+                0x00000248                SENSOR_next
+ .text          0x00000268       0x68 build/tcnt.o
+                0x00000268                TCNT_start
+                0x0000027c                TCNT_start_div8
+                0x0000029c                TCNT_start_div16
+                0x000002bc                TCNT_stop
+ .text          0x000002d0       0x1c build/hash.o
+                0x000002d0                HASH_write
+                0x000002dc                HASH_compute
+ .text          0x000002ec       0x6c build/firmware.o
+                0x000002ec                irq_handler
+                0x00000304                save_compression
+                0x0000034c                closest_difference
+ .text.startup  0x00000358      0x260 build/firmware.o
+                0x00000358                main
+ .text          0x000005b8        0x0 build/start.o
+
+.data           0x00002000        0x0
+                0x00000000                        . = 0x0
+ *(.data)
+ .data          0x00002000        0x0 build/sensor.o
+ .data          0x00002000        0x0 build/tcnt.o
+ .data          0x00002000        0x0 build/hash.o
+ .data          0x00002000        0x0 build/firmware.o
+ .data          0x00002000        0x0 build/start.o
+
+.bss            0x00002000        0x0
+ .bss           0x00002000        0x0 build/sensor.o
+ .bss           0x00002000        0x0 build/tcnt.o
+ .bss           0x00002000        0x0 build/hash.o
+ .bss           0x00002000        0x0 build/firmware.o
+ .bss           0x00002000        0x0 build/start.o
+
+.rodata         0x00002000     0x1000
+                0x00001000                        . = 0x1000
+ *fill*         0x00002000     0x1000 
+ *(.rodata)
+                0x00003000                        . = ALIGN (0x4)
+ FILL mask 0xff
+
+/DISCARD/
+ *(.note*)
+ *(.iplt*)
+ *(.igot*)
+ *(.rel*)
+ *(.comment)
+ *(.riscv.attributes)
+LOAD build/sensor.o
+LOAD build/tcnt.o
+LOAD build/hash.o
+LOAD build/firmware.o
+LOAD build/start.o
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a
+START GROUP
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/../../../../riscv32-unknown-elf/lib/libc.a
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/../../../../riscv32-unknown-elf/lib/libgloss.a
+END GROUP
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a
+OUTPUT(firmware.elf elf32-littleriscv)
